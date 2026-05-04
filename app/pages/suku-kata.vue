@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { syllables } from '~/data/syllables'
 
+useSiteSeo({
+  title: 'Belajar Suku Kata',
+  description:
+    'Latihan menggabungkan konsonan dan vokal jadi suku kata: ba-bi-bu-be-bo, ma-mi-mu-me-mo. Tahap 2 dari kurikulum belajar membaca anak Indonesia.',
+})
+
 const idx = ref(0)
 const showConfetti = ref(0)
 const { markDone, completed } = useProgress('syllables')

@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { sentences } from '~/data/sentences'
 
+useSiteSeo({
+  title: 'Belajar Membaca Kalimat',
+  description:
+    'Baca kalimat sederhana sehari-hari: "Ini ibu", "Itu bola", "Sapi minum susu". Tahap 4 (terakhir) dari kurikulum belajar membaca anak Indonesia.',
+})
+
 const idx = ref(0)
 const showConfetti = ref(0)
 const { markDone, completed } = useProgress('sentences')

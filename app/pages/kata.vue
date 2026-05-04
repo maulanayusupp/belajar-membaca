@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { words } from '~/data/words'
 
+useSiteSeo({
+  title: 'Belajar Membaca Kata',
+  description:
+    'Baca kata sederhana: mama, papa, bola, susu, makan, minum. Latihan eja dan gabung suku kata. Tahap 3 dari kurikulum belajar membaca anak Indonesia.',
+})
+
 const idx = ref(0)
 const showConfetti = ref(0)
 const { markDone, completed } = useProgress('words')

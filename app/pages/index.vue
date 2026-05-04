@@ -1,4 +1,12 @@
 <script setup lang="ts">
+useSiteSeo({
+  title: 'Yuk Bisa Baca',
+  description:
+    'Aplikasi belajar membaca untuk anak Indonesia. Ikuti 4 tahap: huruf, suku kata, kata, kalimat — lengkap dengan suara bahasa Indonesia dan animasi seru.',
+  path: '/',
+  schemaType: 'EducationalApplication',
+})
+
 const menus = [
   {
     to: '/huruf',

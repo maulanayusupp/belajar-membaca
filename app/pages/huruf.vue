@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { letters } from '~/data/letters'
 
+useSiteSeo({
+  title: 'Belajar Huruf A sampai Z',
+  description:
+    'Kenali bunyi huruf A sampai Z dengan suara bahasa Indonesia, contoh kata, dan emoji ramah anak. Tahap 1 dari kurikulum belajar membaca.',
+})
+
 const idx = ref(0)
 const showConfetti = ref(0)
 const { markDone, completed } = useProgress('letters')

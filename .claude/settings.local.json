@@ -36,7 +36,18 @@
       "Bash(/usr/bin/head -30)",
       "Bash(/usr/bin/grep -oE \"\\\\.card-soft[^{]*\\\\{[^}]+\\\\}\" /Users/maulana/.claude/projects/-Applications-XAMPP-xamppfiles-htdocs-belajar-membaca/1dbbc576-650c-44c3-b3dc-73ab8dad09d3/tool-results/bgppm9xdy.txt)",
       "Bash(/usr/bin/head -3)",
-      "Bash(/usr/bin/grep -c \"background-color: rgb\\(255 255 255 / 0.8\\)\" /Users/maulana/.claude/projects/-Applications-XAMPP-xamppfiles-htdocs-belajar-membaca/1dbbc576-650c-44c3-b3dc-73ab8dad09d3/tool-results/bgppm9xdy.txt)"
+      "Bash(/usr/bin/grep -c \"background-color: rgb\\(255 255 255 / 0.8\\)\" /Users/maulana/.claude/projects/-Applications-XAMPP-xamppfiles-htdocs-belajar-membaca/1dbbc576-650c-44c3-b3dc-73ab8dad09d3/tool-results/bgppm9xdy.txt)",
+      "Bash(/usr/bin/grep -qE \"Local:|ERROR\" /private/tmp/claude-501/-Applications-XAMPP-xamppfiles-htdocs-belajar-membaca/1dbbc576-650c-44c3-b3dc-73ab8dad09d3/tasks/b0thi5atr.output)",
+      "Bash(/bin/sleep 3)",
+      "Bash(/usr/bin/grep -oE \"localhost:[0-9]+\" /private/tmp/claude-501/-Applications-XAMPP-xamppfiles-htdocs-belajar-membaca/1dbbc576-650c-44c3-b3dc-73ab8dad09d3/tasks/b0thi5atr.output)",
+      "Bash(/usr/bin/curl -s http://localhost:3000/)",
+      "Bash(/usr/bin/grep -oE '<meta[^>]*\\(og:|twitter:|description|robots|theme-color|application-name\\)[^>]*>|<title>[^<]*</title>|<link[^>]*\\(canonical|manifest|apple-touch|favicon|mask-icon\\)[^>]*>')",
+      "Bash(/usr/bin/grep -oE '<title>[^<]*</title>|<meta[^>]*\\(og:title|og:url|og:description|description\\)[^>]*>|<link[^>]*canonical[^>]*>')",
+      "Bash(/usr/bin/head -20)",
+      "Bash(/usr/bin/curl -s http://localhost:3000/__TRACKED_VAR__)",
+      "Bash(/usr/bin/grep -oE '<title>[^<]*</title>|<meta property=\"og:title\"[^>]*>')",
+      "Bash(/usr/bin/grep -oE 'application/ld\\\\+json')",
+      "Bash(/usr/bin/wc -l)"
     ]
   }
 }

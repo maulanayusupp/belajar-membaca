@@ -1,0 +1,20 @@
+{
+  "name": "Belajar Membaca - Yuk Bisa Baca!",
+  "short_name": "Belajar Membaca",
+  "description": "Aplikasi belajar membaca untuk anak-anak Indonesia. Mulai dari huruf, suku kata, kata, sampai kalimat — dengan suara bahasa Indonesia.",
+  "lang": "id",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fef3c7",
+  "theme_color": "#fbbf24",
+  "categories": ["education", "kids"],
+  "icons": [
+    { "src": "/favicon.svg",          "type": "image/svg+xml", "sizes": "any",      "purpose": "any" },
+    { "src": "/icon-192.svg",         "type": "image/svg+xml", "sizes": "192x192",  "purpose": "any" },
+    { "src": "/icon-512.svg",         "type": "image/svg+xml", "sizes": "512x512",  "purpose": "any maskable" },
+    { "src": "/apple-touch-icon.svg", "type": "image/svg+xml", "sizes": "180x180",  "purpose": "any" }
+  ]
+}
