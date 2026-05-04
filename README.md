@@ -2,7 +2,8 @@
 
 Aplikasi belajar membaca untuk anak-anak Indonesia. Mengikuti kurikulum klasik
 empat tahap: **Huruf → Suku Kata → Kata → Kalimat**, dengan pelafalan suara
-bahasa Indonesia, animasi ramah anak, dan progress tersimpan di perangkat.
+bahasa Indonesia, animasi ramah anak, **mode kuis** untuk uji pemahaman, dan
+progress tersimpan di perangkat.
 
 Dibangun dengan **Nuxt 4**, **Vue 3 (Composition API)**, dan **Tailwind CSS**.
 Audio menggunakan Web Speech API browser — tanpa server TTS, tanpa API key,
@@ -43,6 +44,41 @@ Voice yang dikenali:
 Cara memasang lihat panduan di banner aplikasi (muncul otomatis kalau voice
 belum tersedia).
 
+### Kecepatan suara
+
+Toggle 🐢 Pelan / 🚶 Normal / 🐇 Cepat (multiplier `0.7×` / `1.0×` / `1.3×`)
+muncul fixed di pojok kanan atas tiap halaman. Pilihan disimpan di
+localStorage (`belajar-membaca:speed:v1`) dan diaplikasikan pada SEMUA
+panggilan `speak()` dengan dikalikan ke `rate` per-call. Artinya, kecepatan
+relatif antar mode tetap (eja-suku-kata tetap lebih lambat dari kata utuh) —
+kecepatan absolutnya saja yang berubah.
+
+## Mode kuis
+
+Kuis acak 10 soal per putaran, untuk menguji pemahaman setelah belajar.
+
+Tipe soal: **dengar suara → pilih jawaban yang benar**. Empat opsi (pilihan
+ganda) untuk huruf/suku-kata/kata, opsi vertikal untuk kalimat (karena lebih
+panjang).
+
+Tersedia 4 kategori, masing-masing pakai data yang sama dengan tahap belajar:
+
+| Route               | Kategori              |
+| ------------------- | --------------------- |
+| `/kuis/huruf`       | Pilih huruf yang benar |
+| `/kuis/suku-kata`   | Pilih suku kata        |
+| `/kuis/kata`        | Pilih kata             |
+| `/kuis/kalimat`     | Pilih kalimat          |
+
+Skoring: 0–3 bintang berdasarkan rasio jawaban benar (≥90% = 3, ≥60% = 2,
+≥30% = 1). Hasil tampil dengan animasi sparkle + tombol "Coba lagi" yang
+me-randomize pertanyaan baru.
+
+Logic kuis ada di `useQuiz<T>(pool, keyFn)` — composable generic yang bisa
+dipakai untuk dataset apapun: hanya butuh array + key function untuk
+identitas. Distractor di-pick acak dari pool yang sama (mengecualikan
+correct), sehingga seluruh logic stateless dan reusable.
+
 ## Struktur proyek
 
 ```
@@ -50,14 +86,19 @@ app/
 ├── app.vue                       # Shell + background dekoratif
 ├── assets/css/main.css           # Tailwind + custom layers/utilities
 ├── composables/
-│   ├── useSpeech.ts              # TTS Indonesia (singleton, strict ID)
-│   └── useProgress.ts            # localStorage tracker per tahap
+│   ├── useSpeech.ts              # TTS Indonesia (singleton, strict ID, speed multiplier)
+│   ├── useProgress.ts            # localStorage tracker per tahap
+│   ├── useQuiz.ts                # Generic quiz state (questions, score, restart)
+│   └── useSiteSeo.ts             # Per-page SEO helper
 ├── components/                   # Semua single-purpose, mudah di-compose ulang
 │   ├── AppHeader.vue             # Header + tombol kembali
 │   ├── AudioButton.vue           # Tombol speaker reusable (5 varian, 4 ukuran)
 │   ├── ConfettiBurst.vue         # Animasi confetti saat selesai
 │   ├── FloatingShapes.vue        # 8 emoji background animated
 │   ├── HomeMenuCard.vue          # Kartu menu home
+│   ├── QuizCard.vue              # Soal kuis: audio + 4 opsi
+│   ├── QuizResult.vue            # Skor akhir dengan bintang
+│   ├── SpeedToggle.vue           # Switch kecepatan suara global
 │   ├── LessonNav.vue             # Tombol Sebelum/Lanjut + counter
 │   ├── LetterCard.vue            # Tahap 1: huruf besar/kecil + emoji + suara
 │   ├── ProgressDots.vue          # Indikator progress
@@ -69,10 +110,14 @@ app/
 │   ├── letters.ts                # 26 huruf + bunyi + contoh + emoji
 │   ├── syllables.ts              # 12 konsonan × 5 vokal = 60 suku kata
 │   ├── words.ts                  # 16 kata (KV-KV → KVK)
-│   └── sentences.ts              # 7 kalimat sederhana
+│   ├── sentences.ts              # 7 kalimat sederhana
+│   └── quiz-specs.ts             # Mapping data → bentuk seragam untuk QuizCard
 └── pages/
-    ├── index.vue                 # Home dengan 4 kartu tahap
+    ├── index.vue                 # Home dengan 4 kartu tahap + 1 kartu kuis
     ├── huruf.vue, suku-kata.vue, kata.vue, kalimat.vue
+    └── kuis/
+        ├── index.vue             # Pilih kategori kuis
+        └── [tahap].vue           # Runner kuis (huruf/suku-kata/kata/kalimat)
 ```
 
 ### Filosofi komponen
@@ -232,8 +277,10 @@ sparkle dekoratif. Konsisten dengan tone aplikasi.
 
 ## Roadmap (ide pengembangan)
 
-- Mode kuis: dengar suara → pilih huruf/kata yang benar
-- Mascot karakter dengan ekspresi
-- Setting kecepatan suara di header
-- Mode latihan menulis dengan canvas (trace huruf)
-- Export sertifikat selesai per tahap
+- ✅ ~~Mode kuis: dengar suara → pilih huruf/kata yang benar~~ (selesai)
+- ✅ ~~Setting kecepatan suara di header~~ (selesai)
+- Mascot karakter dengan ekspresi (idle, senang, sedih saat salah)
+- Mode latihan menulis dengan canvas (trace huruf, deteksi stroke)
+- Export sertifikat selesai per tahap (PDF/SVG download)
+- Riwayat skor kuis terbaik per kategori
+- Daily streak / achievement badges

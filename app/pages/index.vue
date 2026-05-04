@@ -76,6 +76,19 @@ const menus = [
       />
     </section>
 
+    <!-- Quiz card — full-width challenge below the four tahap -->
+    <section class="mt-4 sm:mt-6">
+      <HomeMenuCard
+        to="/kuis"
+        step="Tantangan"
+        title="Mode Kuis"
+        description="Sudah hafal? Coba dengar suara dan tebak yang benar. Ada 10 soal acak setiap putaran!"
+        emoji="🎯"
+        color="from-fuchsia-500 to-purple-600"
+        :delay="500"
+      />
+    </section>
+
     <!-- Footer note -->
     <footer class="mt-12 text-center text-sm text-slate-500">
       <p>💡 Tips: Latihan 10–15 menit setiap hari, lebih baik daripada 1 jam tapi jarang.</p>

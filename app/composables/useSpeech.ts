@@ -24,6 +24,32 @@ const voice = ref<SpeechSynthesisVoice | null>(null)
 const hasIndonesianVoice = ref(false)
 let initialized = false
 
+/**
+ * Global speed multiplier — applied on top of each call's own `rate`.
+ * 0.7 = pelan, 1.0 = normal, 1.3 = cepat.
+ * Persisted to localStorage so kids don't have to re-pick every visit.
+ */
+const SPEED_KEY = 'belajar-membaca:speed:v1'
+const speedMultiplier = ref(1.0)
+
+function loadSpeed() {
+  if (typeof window === 'undefined') return
+  const raw = localStorage.getItem(SPEED_KEY)
+  const n = Number(raw)
+  if (n > 0 && n < 3) speedMultiplier.value = n
+}
+
+function setSpeed(v: number) {
+  speedMultiplier.value = v
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(SPEED_KEY, String(v))
+    } catch {
+      // quota / disabled — ignore
+    }
+  }
+}
+
 const NAME_PATTERNS = [
   /damayanti/i,
   /bahasa\s*indonesia/i,
@@ -53,6 +79,7 @@ function ensureInit() {
   if (!('speechSynthesis' in window)) return
   initialized = true
   supported.value = true
+  loadSpeed()
   pickVoice()
   // Voices load asynchronously on Chrome/Edge — re-pick when they arrive.
   window.speechSynthesis.addEventListener('voiceschanged', pickVoice)
@@ -77,7 +104,9 @@ export function useSpeech() {
       const u = new SpeechSynthesisUtterance(text)
       u.voice = voice.value!
       u.lang = voice.value!.lang || 'id-ID'
-      u.rate = opts.rate ?? 0.9
+      // Per-call rate × global speed multiplier. Clamp to engine-safe range.
+      const finalRate = (opts.rate ?? 0.9) * speedMultiplier.value
+      u.rate = Math.min(Math.max(finalRate, 0.4), 2.0)
       u.pitch = opts.pitch ?? 1.15
       u.volume = opts.volume ?? 1
       u.onstart = () => (speaking.value = true)
@@ -107,5 +136,16 @@ export function useSpeech() {
     }
   }
 
-  return { supported, ready, speaking, voice, hasIndonesianVoice, speak, speakSequence, stop }
+  return {
+    supported,
+    ready,
+    speaking,
+    voice,
+    hasIndonesianVoice,
+    speedMultiplier,
+    setSpeed,
+    speak,
+    speakSequence,
+    stop,
+  }
 }
