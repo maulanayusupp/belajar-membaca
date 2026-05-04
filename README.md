@@ -224,6 +224,7 @@ app/
     ├── index.vue                 # Home: 4 kartu tahap + kuis + menulis
     ├── huruf.vue, suku-kata.vue, kata.vue, kalimat.vue
     ├── menulis.vue               # Latihan menulis huruf (canvas trace)
+    ├── penghargaan.vue            # Streak harian + grid lencana
     ├── kuis/
     │   ├── index.vue             # Pilih kategori kuis
     │   └── [tahap].vue           # Runner kuis (huruf/suku-kata/kata/kalimat)
