@@ -7,7 +7,7 @@ import type { AchievementDef } from '~/data/achievements'
  * dengan auto-dismiss 4 detik + animasi pop-in.
  */
 const { pendingToasts, popToast } = useAchievements()
-const { speak } = useSpeech()
+const { speak, speaking } = useSpeech()
 
 const visible = ref<AchievementDef | null>(null)
 let timer: ReturnType<typeof setTimeout> | null = null
@@ -17,7 +17,13 @@ function showNext() {
   const next = popToast()
   if (!next) return
   visible.value = next
-  speak('Hebat! Kamu dapat lencana baru!')
+  // Jangan interrupt suara lesson/kuis yang sedang jalan — toast cukup
+  // tampil visual saja kalau ada audio lain. Tunggu 700ms supaya suara user
+  // berikutnya (mis. soal kuis baru, "Kamu benar!") sudah selesai dipanggil
+  // dulu, baru kita ucapkan badge.
+  setTimeout(() => {
+    if (!speaking.value) speak('Hebat! Kamu dapat lencana baru!')
+  }, 700)
   timer = setTimeout(() => {
     visible.value = null
     timer = null
@@ -57,20 +63,20 @@ function dismiss() {
     >
       <button
         type="button"
-        class="block w-full text-left card-soft bg-gradient-to-br p-4 text-white shadow-2xl ring-2 ring-white animate-pop-in"
+        class="block w-full text-left rounded-3xl bg-emerald-600 bg-gradient-to-br p-4 text-white shadow-2xl ring-2 ring-white animate-pop-in"
         :class="visible.color"
         @click="dismiss"
       >
         <div class="flex items-center gap-3">
           <span class="text-5xl drop-shadow-lg animate-wiggle">{{ visible.emoji }}</span>
           <div class="flex-1 min-w-0">
-            <p class="text-xs font-bold uppercase tracking-widest opacity-90">
+            <p class="text-xs font-bold uppercase tracking-widest text-shadow-pop">
               🏆 Lencana Baru
             </p>
             <p class="font-display font-extrabold text-xl text-shadow-pop truncate">
               {{ visible.title }}
             </p>
-            <p class="text-sm opacity-95 line-clamp-2">{{ visible.description }}</p>
+            <p class="text-sm font-semibold text-shadow-pop line-clamp-2">{{ visible.description }}</p>
           </div>
         </div>
       </button>

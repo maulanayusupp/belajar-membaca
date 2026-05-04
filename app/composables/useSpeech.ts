@@ -34,9 +34,13 @@ const speedMultiplier = ref(1.0)
 
 function loadSpeed() {
   if (typeof window === 'undefined') return
-  const raw = localStorage.getItem(SPEED_KEY)
-  const n = Number(raw)
-  if (n > 0 && n < 3) speedMultiplier.value = n
+  try {
+    const raw = localStorage.getItem(SPEED_KEY)
+    const n = Number(raw)
+    if (n > 0 && n < 3) speedMultiplier.value = n
+  } catch {
+    // localStorage diakses dilarang (private mode, dll) — pakai default
+  }
 }
 
 function setSpeed(v: number) {
@@ -64,14 +68,58 @@ function isIndonesian(v: SpeechSynthesisVoice): boolean {
   return NAME_PATTERNS.some((re) => re.test(v.name))
 }
 
+/** Total voices terdeteksi — untuk diagnostik di banner */
+const voiceCount = ref(0)
+/** Semua voice Indonesia yang terdeteksi — untuk selector manual di banner */
+const indonesianVoices = ref<SpeechSynthesisVoice[]>([])
+/** Override pilihan user (disimpan di localStorage) */
+const VOICE_KEY = 'belajar-membaca:voice-name:v1'
+
+function loadVoicePreference(): string | null {
+  if (typeof window === 'undefined') return null
+  try {
+    return localStorage.getItem(VOICE_KEY)
+  } catch {
+    return null
+  }
+}
+
+function saveVoicePreference(name: string) {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(VOICE_KEY, name)
+  } catch {
+    // ignore
+  }
+}
+
 function pickVoice() {
   if (typeof window === 'undefined' || !window.speechSynthesis) return
   const voices = window.speechSynthesis.getVoices()
+  voiceCount.value = voices.length
   if (!voices.length) return
-  const id = voices.find(isIndonesian) || null
+  const allID = voices.filter(isIndonesian)
+  indonesianVoices.value = allID
+
+  // Prioritas: pilihan user (jika disimpan & masih ada) → Google online voices
+  // (paling andal) → voice lokal pertama → null.
+  const preferred = loadVoicePreference()
+  const id =
+    (preferred && allID.find((v) => v.name === preferred)) ||
+    allID.find((v) => /google/i.test(v.name)) ||
+    allID.find((v) => v.localService === false) ||
+    allID[0] ||
+    null
   voice.value = id
   hasIndonesianVoice.value = !!id
   ready.value = true
+}
+
+function setVoice(name: string) {
+  const v = indonesianVoices.value.find((x) => x.name === name)
+  if (!v) return
+  voice.value = v
+  saveVoicePreference(name)
 }
 
 function ensureInit() {
@@ -79,10 +127,39 @@ function ensureInit() {
   if (!('speechSynthesis' in window)) return
   initialized = true
   supported.value = true
-  loadSpeed()
-  pickVoice()
-  // Voices load asynchronously on Chrome/Edge — re-pick when they arrive.
-  window.speechSynthesis.addEventListener('voiceschanged', pickVoice)
+  // Setiap step di-try terpisah — kalau loadSpeed throw, voice detection
+  // tetap jalan, dan sebaliknya. Tujuannya: audio tetap bunyi walau salah
+  // satu side-effect bermasalah.
+  try {
+    loadSpeed()
+  } catch {
+    // ignore
+  }
+  try {
+    pickVoice()
+  } catch {
+    // ignore
+  }
+  // Polling fallback: di Chrome, `voiceschanged` event kadang tidak fire
+  // walaupun voices sebenarnya sudah loaded. Poll setiap 200ms sampai voice
+  // terdeteksi atau timeout (4 detik), tanpa mengganggu performa.
+  if (!voice.value) {
+    let attempts = 0
+    const interval = setInterval(() => {
+      try {
+        pickVoice()
+      } catch {
+        // ignore
+      }
+      attempts++
+      if (voice.value || attempts >= 20) clearInterval(interval)
+    }, 200)
+  }
+  try {
+    window.speechSynthesis.addEventListener('voiceschanged', pickVoice)
+  } catch {
+    // ignore
+  }
 }
 
 export function useSpeech() {
@@ -91,16 +168,52 @@ export function useSpeech() {
   /**
    * Speak the given text in Indonesian. Resolves silently when no Indonesian
    * voice is available — callers don't need to special-case this.
+   *
+   * Kalau voice belum sempat terdeteksi (user klik tombol cepat banget),
+   * akan tunggu max 1.5 detik sambil polling — daripada langsung diam.
    */
-  function speak(
+  async function speak(
     text: string,
     opts: { rate?: number; pitch?: number; volume?: number } = {},
   ): Promise<void> {
-    if (typeof window === 'undefined' || !window.speechSynthesis) return Promise.resolve()
-    if (!voice.value) return Promise.resolve()
+    if (typeof window === 'undefined' || !window.speechSynthesis) return
 
-    return new Promise((resolve) => {
+    // Tunggu voice detect kalau belum siap
+    if (!voice.value) {
+      for (let i = 0; i < 15; i++) {
+        await new Promise((r) => setTimeout(r, 100))
+        if (voice.value) break
+      }
+    }
+    if (!voice.value) return
+
+    // Chrome/Safari bug: cancel() lalu speak() langsung membuat engine
+    // membatalkan utterance baru juga, dan rapid click menyebabkan engine
+    // masuk state stuck (utterance baru di-accept tapi nggak pernah jalan).
+    //
+    // Fix: tandai `speaking=true` SEKARANG (sebelum await), supaya UI yang
+    // pakai `:disabled="speaking"` langsung men-disable tombol & cegah
+    // user klik lagi selama engine warmup. Beri delay 200ms setelah cancel
+    // (60ms tidak cukup di macOS Safari/Chrome).
+    speaking.value = true
+    const wasSpeaking = window.speechSynthesis.speaking || window.speechSynthesis.pending
+    if (wasSpeaking) {
       window.speechSynthesis.cancel()
+      await new Promise((r) => setTimeout(r, 200))
+    }
+
+    // Chrome bug: setelah idle / cancel, engine kadang dalam state "paused"
+    // yang menyebabkan setiap speak fire onerror "canceled" instan. Resume
+    // dulu — no-op kalau memang tidak paused.
+    try {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume()
+      }
+    } catch {
+      // ignore
+    }
+
+    return new Promise<void>((resolve) => {
       const u = new SpeechSynthesisUtterance(text)
       u.voice = voice.value!
       u.lang = voice.value!.lang || 'id-ID'
@@ -109,12 +222,23 @@ export function useSpeech() {
       u.rate = Math.min(Math.max(finalRate, 0.4), 2.0)
       u.pitch = opts.pitch ?? 1.15
       u.volume = opts.volume ?? 1
+
+      // Safety timeout — kalau onstart/onend nggak pernah fire (browser
+      // silently reject), Promise tetap resolve setelah 10 detik biar
+      // pemanggil tidak hang.
+      const safety = setTimeout(() => {
+        speaking.value = false
+        resolve()
+      }, 10000)
+
       u.onstart = () => (speaking.value = true)
       u.onend = () => {
+        clearTimeout(safety)
         speaking.value = false
         resolve()
       }
       u.onerror = () => {
+        clearTimeout(safety)
         speaking.value = false
         resolve()
       }
@@ -141,7 +265,10 @@ export function useSpeech() {
     ready,
     speaking,
     voice,
+    voiceCount,
+    indonesianVoices,
     hasIndonesianVoice,
+    setVoice,
     speedMultiplier,
     setSpeed,
     speak,

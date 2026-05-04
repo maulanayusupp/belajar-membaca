@@ -7,6 +7,10 @@ export default <Partial<Config>>{
     './app/pages/**/*.vue',
     './app/composables/**/*.{js,ts}',
     './app/plugins/**/*.{js,ts}',
+    // Penting: data/*.ts berisi string class (warna gradient untuk kartu,
+    // achievement, dll). Tanpa scan ini, Tailwind tidak akan generate kelas
+    // yang cuma muncul di file data — gradient toast/lencana akan kosong.
+    './app/data/**/*.{js,ts}',
     './app/app.vue',
     './app/error.vue',
   ],
