@@ -1,21 +1,45 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Belajar Membaca">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Bita - Belajar Membaca">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%"   stop-color="#fbbf24"/>
-      <stop offset="55%"  stop-color="#fb923c"/>
-      <stop offset="100%" stop-color="#f87171"/>
+      <stop offset="0%"  stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
     </linearGradient>
+    <radialGradient id="body" cx="50%" cy="40%" r="60%">
+      <stop offset="0%"   stop-color="#fed7aa"/>
+      <stop offset="60%"  stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </radialGradient>
+    <radialGradient id="ear" cx="50%" cy="50%" r="60%">
+      <stop offset="0%"   stop-color="#fdba74"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </radialGradient>
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="10" stdDeviation="6" flood-color="#000" flood-opacity="0.25"/>
+      <feDropShadow dx="0" dy="10" stdDeviation="6" flood-color="#000" flood-opacity="0.22"/>
     </filter>
   </defs>
-  <!-- Maskable safe zone: keep visual content within central 80% (~410x410). -->
+
+  <!-- Maskable safe zone: konten utama di area tengah ~80% (~410x410) -->
   <rect x="0" y="0" width="512" height="512" rx="120" ry="120" fill="url(#bg)"/>
-  <g filter="url(#shadow)" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="900">
-    <text x="160" y="352" text-anchor="middle" font-size="272" fill="#ffffff">A</text>
-    <text x="352" y="352" text-anchor="middle" font-size="208" fill="#ffffff">a</text>
+
+  <g filter="url(#shadow)">
+    <!-- Ears -->
+    <ellipse cx="160" cy="180" rx="50" ry="60" fill="url(#ear)"/>
+    <ellipse cx="352" cy="180" rx="50" ry="60" fill="url(#ear)"/>
+    <ellipse cx="160" cy="190" rx="24" ry="32" fill="#f9a8d4"/>
+    <ellipse cx="352" cy="190" rx="24" ry="32" fill="#f9a8d4"/>
+
+    <!-- Body -->
+    <ellipse cx="256" cy="306" rx="180" ry="170" fill="url(#body)"/>
+
+    <!-- Cheeks -->
+    <ellipse cx="142" cy="354" rx="32" ry="20" fill="#f9a8d4" opacity="0.85"/>
+    <ellipse cx="370" cy="354" rx="32" ry="20" fill="#f9a8d4" opacity="0.85"/>
+
+    <!-- Eyes — closed crescents -->
+    <path d="M 174 286 Q 200 252 226 286"   stroke="#0f172a" stroke-width="18" fill="none" stroke-linecap="round"/>
+    <path d="M 286 286 Q 312 252 338 286"  stroke="#0f172a" stroke-width="18" fill="none" stroke-linecap="round"/>
+
+    <!-- Mouth -->
+    <path d="M 212 372 Q 256 412 300 372" stroke="#0f172a" stroke-width="16" fill="none" stroke-linecap="round"/>
   </g>
-  <circle cx="416" cy="112" r="20" fill="#ffffff" opacity="0.95"/>
-  <circle cx="100" cy="400" r="14" fill="#ffffff" opacity="0.75"/>
-  <path d="M400 408 L408 388 L416 408 L436 416 L416 424 L408 444 L400 424 L380 416 Z" fill="#ffffff" opacity="0.9"/>
 </svg>

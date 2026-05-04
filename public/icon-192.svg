@@ -1,20 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-label="Belajar Membaca">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-label="Bita - Belajar Membaca">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%"   stop-color="#fbbf24"/>
-      <stop offset="55%"  stop-color="#fb923c"/>
-      <stop offset="100%" stop-color="#f87171"/>
+      <stop offset="0%"  stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
     </linearGradient>
+    <radialGradient id="body" cx="50%" cy="40%" r="60%">
+      <stop offset="0%"   stop-color="#fed7aa"/>
+      <stop offset="60%"  stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </radialGradient>
+    <radialGradient id="ear" cx="50%" cy="50%" r="60%">
+      <stop offset="0%"   stop-color="#fdba74"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </radialGradient>
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="4" stdDeviation="2.4" flood-color="#000" flood-opacity="0.25"/>
+      <feDropShadow dx="0" dy="4" stdDeviation="2.4" flood-color="#000" flood-opacity="0.2"/>
     </filter>
   </defs>
+
   <rect x="0" y="0" width="192" height="192" rx="44" ry="44" fill="url(#bg)"/>
-  <g filter="url(#shadow)" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="900">
-    <text x="60" y="132" text-anchor="middle" font-size="102" fill="#ffffff">A</text>
-    <text x="132" y="132" text-anchor="middle" font-size="78" fill="#ffffff">a</text>
+
+  <g filter="url(#shadow)">
+    <ellipse cx="60"  cy="66" rx="18" ry="22" fill="url(#ear)"/>
+    <ellipse cx="132" cy="66" rx="18" ry="22" fill="url(#ear)"/>
+    <ellipse cx="60"  cy="70" rx="9" ry="12" fill="#f9a8d4"/>
+    <ellipse cx="132" cy="70" rx="9" ry="12" fill="#f9a8d4"/>
+
+    <ellipse cx="96" cy="114" rx="66" ry="62" fill="url(#body)"/>
+
+    <ellipse cx="55" cy="132" rx="12" ry="7" fill="#f9a8d4" opacity="0.85"/>
+    <ellipse cx="137" cy="132" rx="12" ry="7" fill="#f9a8d4" opacity="0.85"/>
+
+    <path d="M 66 108 Q 75 96 84 108"   stroke="#0f172a" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M 108 108 Q 117 96 126 108" stroke="#0f172a" stroke-width="7" fill="none" stroke-linecap="round"/>
+
+    <path d="M 80 138 Q 96 154 112 138" stroke="#0f172a" stroke-width="6" fill="none" stroke-linecap="round"/>
   </g>
-  <circle cx="156" cy="42" r="7.5" fill="#ffffff" opacity="0.95"/>
-  <circle cx="38" cy="150" r="5.5" fill="#ffffff" opacity="0.75"/>
-  <path d="M150 152 L153 145 L156 152 L163 155 L156 158 L153 165 L150 158 L143 155 Z" fill="#ffffff" opacity="0.9"/>
 </svg>

@@ -39,10 +39,12 @@ export default defineNuxtConfig({
         { name: 'googlebot', content: 'index, follow' },
       ],
       link: [
-        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.svg' },
-        { rel: 'mask-icon', href: '/favicon.svg', color: '#fbbf24' },
+        // Cache-buster `?v=bita` agar browser ambil ulang setelah redesign.
+        // Bump kalau favicon diubah lagi. SVG didukung semua browser modern
+        // (Chrome 80+, Firefox 41+, Safari 9+, Edge) — tidak perlu .ico fallback.
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg?v=bita' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.svg?v=bita' },
+        { rel: 'mask-icon', href: '/favicon.svg?v=bita', color: '#fb923c' },
         { rel: 'manifest', href: '/manifest.webmanifest' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },

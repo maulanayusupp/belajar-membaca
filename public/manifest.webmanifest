@@ -9,12 +9,12 @@
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#fef3c7",
-  "theme_color": "#fbbf24",
+  "theme_color": "#fb923c",
   "categories": ["education", "kids"],
   "icons": [
-    { "src": "/favicon.svg",          "type": "image/svg+xml", "sizes": "any",      "purpose": "any" },
-    { "src": "/icon-192.svg",         "type": "image/svg+xml", "sizes": "192x192",  "purpose": "any" },
-    { "src": "/icon-512.svg",         "type": "image/svg+xml", "sizes": "512x512",  "purpose": "any maskable" },
-    { "src": "/apple-touch-icon.svg", "type": "image/svg+xml", "sizes": "180x180",  "purpose": "any" }
+    { "src": "/favicon.svg?v=bita",          "type": "image/svg+xml", "sizes": "any",      "purpose": "any" },
+    { "src": "/icon-192.svg?v=bita",         "type": "image/svg+xml", "sizes": "192x192",  "purpose": "any" },
+    { "src": "/icon-512.svg?v=bita",         "type": "image/svg+xml", "sizes": "512x512",  "purpose": "any maskable" },
+    { "src": "/apple-touch-icon.svg?v=bita", "type": "image/svg+xml", "sizes": "180x180",  "purpose": "any" }
   ]
 }
