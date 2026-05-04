@@ -59,7 +59,8 @@
       "Bash(/usr/bin/grep -oE 'Dengarkan suaranya|Putar lagi|Mana yang benar|Soal [0-9]+ dari')",
       "Bash(/usr/bin/curl -s \"http://localhost:3000/sitemap.xml\")",
       "Bash(/usr/bin/grep -oE '<loc>[^<]+</loc>')",
-      "Bash(/usr/bin/grep *)"
+      "Bash(/usr/bin/grep *)",
+      "Bash(/usr/bin/tail -8 /private/tmp/claude-501/-Applications-XAMPP-xamppfiles-htdocs-belajar-membaca/1dbbc576-650c-44c3-b3dc-73ab8dad09d3/tasks/bz6n8a18e.output)"
     ]
   }
 }

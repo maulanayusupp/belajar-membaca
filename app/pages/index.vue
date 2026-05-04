@@ -46,20 +46,26 @@ const menus = [
 <template>
   <main class="flex-1 px-4 pb-12 pt-6 sm:px-8 sm:pt-10 max-w-5xl mx-auto w-full">
     <!-- Hero -->
-    <section class="text-center mb-8 sm:mb-12 animate-slide-up">
-      <div class="inline-flex items-center gap-3 mb-3">
-        <span class="text-6xl sm:text-7xl animate-wiggle inline-block">📚</span>
-        <span class="text-6xl sm:text-7xl animate-bounce-soft inline-block">🌟</span>
+    <section class="mb-8 sm:mb-12 animate-slide-up">
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+        <Mascot expression="excited" :size="140" label="Halo, aku Bita!" />
+        <div class="text-center sm:text-left">
+          <div class="relative inline-block bg-white/90 rounded-3xl rounded-bl-md px-4 py-2 shadow-md mb-3 animate-pop-in">
+            <p class="text-sm sm:text-base font-bold text-slate-700">
+              Hai! Aku Bita 👋 Ayo belajar bareng!
+            </p>
+          </div>
+          <h1 class="heading-fun text-4xl sm:text-6xl text-slate-800 leading-tight">
+            Yuk, Belajar
+            <span class="bg-gradient-to-r from-rose-500 via-amber-500 to-emerald-500 bg-clip-text text-transparent">
+              Membaca!
+            </span>
+          </h1>
+          <p class="mt-2 text-base sm:text-lg text-slate-600 max-w-xl">
+            Pilih tahapan di bawah. Mulai dari yang paling mudah ya 👇
+          </p>
+        </div>
       </div>
-      <h1 class="heading-fun text-4xl sm:text-6xl text-slate-800 leading-tight">
-        Yuk, Belajar
-        <span class="bg-gradient-to-r from-rose-500 via-amber-500 to-emerald-500 bg-clip-text text-transparent">
-          Membaca!
-        </span>
-      </h1>
-      <p class="mt-3 text-base sm:text-lg text-slate-600 max-w-xl mx-auto">
-        Pilih tahapan di bawah. Mulai dari yang paling mudah ya 👇
-      </p>
     </section>
 
     <ClientOnly>

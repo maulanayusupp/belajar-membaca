@@ -21,10 +21,30 @@ const { current, currentIndex, total, score, finished, record, next, restart } =
 )
 
 const { speak } = useSpeech()
+const { getBest, recordResult } = useQuizScores()
 
 const confettiTrigger = ref(0)
 const feedback = ref<'correct' | 'wrong' | null>(null)
 const advancing = ref(false)
+
+// Snapshot best score at mount, before this round records its result.
+// That way "Sebelumnya N/total" stays stable on the result screen.
+const previousBest = ref<number | null>(null)
+const isNewBest = ref(false)
+const recorded = ref(false)
+
+onMounted(() => {
+  const existing = getBest(tahap.value)
+  previousBest.value = existing?.best ?? null
+})
+
+// Persist result exactly once when the quiz finishes.
+watch(finished, (done) => {
+  if (!done || recorded.value) return
+  recorded.value = true
+  const result = recordResult(tahap.value, score.value, total.value)
+  isNewBest.value = result.isNewBest
+})
 
 async function onAnswer(correct: boolean) {
   if (advancing.value) return
@@ -54,6 +74,11 @@ async function onAnswer(correct: boolean) {
 }
 
 function tryAgain() {
+  // Snapshot fresh best (which now includes the round just recorded) so the
+  // next result screen still shows an honest "previously" comparison.
+  previousBest.value = getBest(tahap.value)?.best ?? null
+  isNewBest.value = false
+  recorded.value = false
   restart()
   feedback.value = null
 }
@@ -81,12 +106,19 @@ const optionsForCard = computed(
         class="pointer-events-none fixed inset-0 z-30 flex items-center justify-center"
         aria-hidden="true"
       >
-        <span
-          class="text-9xl drop-shadow-2xl animate-pop-in"
-          :class="feedback === 'correct' ? 'text-emerald-500' : 'text-rose-500'"
-        >
-          {{ feedback === 'correct' ? '✓' : '✗' }}
-        </span>
+        <div class="relative animate-pop-in">
+          <Mascot
+            :expression="feedback === 'correct' ? 'cheer' : 'sad'"
+            :size="220"
+            no-bounce
+          />
+          <span
+            class="absolute -top-3 -right-3 text-7xl drop-shadow-2xl"
+            :class="feedback === 'correct' ? 'text-emerald-500' : 'text-rose-500'"
+          >
+            {{ feedback === 'correct' ? '✓' : '✗' }}
+          </span>
+        </div>
       </div>
     </Transition>
 
@@ -116,7 +148,13 @@ const optionsForCard = computed(
     </section>
 
     <section v-else class="px-4 sm:px-8 mt-6">
-      <QuizResult :score="score" :total="total" @retry="tryAgain" />
+      <QuizResult
+        :score="score"
+        :total="total"
+        :is-new-best="isNewBest"
+        :previous-best="previousBest"
+        @retry="tryAgain"
+      />
     </section>
   </main>
 </template>

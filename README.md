@@ -79,6 +79,43 @@ dipakai untuk dataset apapun: hanya butuh array + key function untuk
 identitas. Distractor di-pick acak dari pool yang sama (mengecualikan
 correct), sehingga seluruh logic stateless dan reusable.
 
+### Skor terbaik per kategori
+
+`useQuizScores()` simpan rekor di localStorage (`belajar-membaca:quiz-scores:v1`).
+Per kategori menyimpan `{ best, total, plays }`. Saat kuis selesai:
+
+- Runner panggil `recordResult(tahap, score, total)` → returns `{ isNewBest }`
+- `QuizResult` tampilkan ribbon **🏆 Rekor!** + perbandingan "Sebelumnya N/total"
+- `/kuis` index tampilkan badge `⭐⭐ 8/10` per kartu kategori (atau "Belum
+  dimainkan" untuk kategori yang belum pernah disentuh)
+
+Reset salah satu atau semua skor via `useQuizScores().reset(tahap?)`.
+
+## Mascot — Bita
+
+Bita adalah maskot SVG (komponen `Mascot.vue`) dengan 5 ekspresi:
+
+| Expression | Wajah                    | Dipakai untuk                          |
+| ---------- | ------------------------ | -------------------------------------- |
+| `idle`     | senyum kecil + mata bulat | default, atau skor 1 bintang           |
+| `happy`    | mata `^_^` + senyum lebar | skor 2 bintang                         |
+| `excited`  | alis naik + mulut O      | greeting di home                        |
+| `sad`      | mata droopy + tetesan air mata | jawaban kuis salah, atau skor 0 bintang |
+| `cheer`    | tangan terangkat + mulut grin | jawaban kuis benar, atau skor 3 bintang |
+
+Bentuk dasar (badan + telinga + pipi) selalu sama — hanya mata, mulut, dan
+hiasan (sparkle, hands up) yang berubah berdasarkan prop `expression`.
+Tidak butuh asset eksternal — semuanya inline SVG.
+
+```vue
+<Mascot expression="excited" :size="160" label="Halo!" />
+```
+
+Tempat dia muncul:
+- **Home hero** — sapaan `excited` dengan speech bubble "Hai! Aku Bita 👋"
+- **Kuis feedback overlay** — `cheer` saat benar, `sad` saat salah (full screen)
+- **QuizResult** — ekspresi adapt ke skor (cheer/happy/idle/sad)
+
 ## Struktur proyek
 
 ```
@@ -89,6 +126,7 @@ app/
 │   ├── useSpeech.ts              # TTS Indonesia (singleton, strict ID, speed multiplier)
 │   ├── useProgress.ts            # localStorage tracker per tahap
 │   ├── useQuiz.ts                # Generic quiz state (questions, score, restart)
+│   ├── useQuizScores.ts          # Best score per kategori (localStorage)
 │   └── useSiteSeo.ts             # Per-page SEO helper
 ├── components/                   # Semua single-purpose, mudah di-compose ulang
 │   ├── AppHeader.vue             # Header + tombol kembali
@@ -96,6 +134,7 @@ app/
 │   ├── ConfettiBurst.vue         # Animasi confetti saat selesai
 │   ├── FloatingShapes.vue        # 8 emoji background animated
 │   ├── HomeMenuCard.vue          # Kartu menu home
+│   ├── Mascot.vue                # Bita — maskot SVG dengan 5 ekspresi
 │   ├── QuizCard.vue              # Soal kuis: audio + 4 opsi
 │   ├── QuizResult.vue            # Skor akhir dengan bintang
 │   ├── SpeedToggle.vue           # Switch kecepatan suara global
@@ -279,8 +318,8 @@ sparkle dekoratif. Konsisten dengan tone aplikasi.
 
 - ✅ ~~Mode kuis: dengar suara → pilih huruf/kata yang benar~~ (selesai)
 - ✅ ~~Setting kecepatan suara di header~~ (selesai)
-- Mascot karakter dengan ekspresi (idle, senang, sedih saat salah)
+- ✅ ~~Riwayat skor kuis terbaik per kategori~~ (selesai)
+- ✅ ~~Mascot karakter dengan ekspresi~~ (Bita — selesai)
 - Mode latihan menulis dengan canvas (trace huruf, deteksi stroke)
 - Export sertifikat selesai per tahap (PDF/SVG download)
-- Riwayat skor kuis terbaik per kategori
 - Daily streak / achievement badges

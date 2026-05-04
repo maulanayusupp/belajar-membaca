@@ -44,11 +44,15 @@ const styleVars = computed(() => ({ animationDelay: `${props.delay}ms` }))
       <p class="mt-3 text-sm sm:text-base leading-relaxed opacity-95">
         {{ description }}
       </p>
-      <div class="mt-4 inline-flex items-center gap-1.5 text-sm font-bold">
-        Mulai
-        <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-          <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
+      <div class="mt-4 flex items-center justify-between gap-3 flex-wrap">
+        <div class="inline-flex items-center gap-1.5 text-sm font-bold">
+          Mulai
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <!-- Optional badge slot — kuis index uses this for "Terbaik: 8/10" -->
+        <slot name="badge" />
       </div>
     </div>
   </NuxtLink>
