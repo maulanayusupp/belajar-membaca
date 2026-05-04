@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    font-family: 'Fredoka', system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-gradient-to-br from-sun-100 via-rose-50 to-sky-100 min-h-screen text-slate-800;
+    background-attachment: fixed;
+  }
+  button {
+    @apply select-none;
+  }
+}
+
+@layer components {
+  .btn-pill {
+    @apply inline-flex items-center justify-center gap-2 rounded-full font-display font-bold
+           transition-all duration-150 active:scale-95 shadow-lg hover:shadow-xl;
+  }
+  /* Bare shell — no background fill, so gradient/solid bg utilities applied
+     alongside it show through cleanly. Add bg-white/80 yourself when you
+     want a frosted look (see HomeMenuCard's outer wrapper). */
+  .card-soft {
+    @apply rounded-3xl shadow-xl ring-1 ring-white/60;
+  }
+  .card-frost {
+    @apply rounded-3xl bg-white/80 backdrop-blur shadow-xl ring-1 ring-white/60;
+  }
+  .heading-fun {
+    @apply font-display font-extrabold tracking-tight;
+  }
+}
+
+@layer utilities {
+  .text-stroke-white {
+    -webkit-text-stroke: 2px white;
+  }
+  .no-tap-highlight {
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Strong dark shadow that keeps white text readable on any background.
+     drop-shadow-lg alone can wash out on lighter portions of a gradient. */
+  .text-shadow-pop {
+    text-shadow:
+      0 1px 0 rgba(0, 0, 0, 0.18),
+      0 2px 6px rgba(0, 0, 0, 0.30),
+      0 4px 16px rgba(0, 0, 0, 0.20);
+  }
+}
