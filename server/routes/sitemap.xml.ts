@@ -8,11 +8,17 @@ const PAGES = [
   { path: '/suku-kata',       changefreq: 'monthly', priority: '0.9' },
   { path: '/kata',            changefreq: 'monthly', priority: '0.9' },
   { path: '/kalimat',         changefreq: 'monthly', priority: '0.9' },
+  { path: '/menulis',         changefreq: 'monthly', priority: '0.8' },
+  { path: '/penghargaan',     changefreq: 'monthly', priority: '0.6' },
   { path: '/kuis',            changefreq: 'monthly', priority: '0.8' },
   { path: '/kuis/huruf',      changefreq: 'monthly', priority: '0.7' },
   { path: '/kuis/suku-kata',  changefreq: 'monthly', priority: '0.7' },
   { path: '/kuis/kata',       changefreq: 'monthly', priority: '0.7' },
   { path: '/kuis/kalimat',    changefreq: 'monthly', priority: '0.7' },
+  { path: '/sertifikat/huruf',      changefreq: 'yearly', priority: '0.5' },
+  { path: '/sertifikat/suku-kata',  changefreq: 'yearly', priority: '0.5' },
+  { path: '/sertifikat/kata',       changefreq: 'yearly', priority: '0.5' },
+  { path: '/sertifikat/kalimat',    changefreq: 'yearly', priority: '0.5' },
 ]
 
 export default defineEventHandler((event) => {

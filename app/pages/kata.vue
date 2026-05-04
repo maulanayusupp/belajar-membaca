@@ -10,6 +10,7 @@ useSiteSeo({
 const idx = ref(0)
 const showConfetti = ref(0)
 const { markDone, completed } = useProgress('words')
+const { trackEngagement } = useEngagement()
 
 const current = computed(() => words[idx.value]!)
 
@@ -25,6 +26,7 @@ function onWordDone() {
 
 function next() {
   markDone(current.value.text)
+  trackEngagement()
   if (idx.value < words.length - 1) {
     idx.value++
   } else {
@@ -57,6 +59,13 @@ function prev() {
 
     <section class="mt-6 sm:mt-8 px-4 sm:px-8">
       <LessonNav :current="idx" :total="words.length" @prev="prev" @next="next" />
+      <ClientOnly>
+        <CertificateBanner
+          tahap-key="kata"
+          :completed-count="completed.length"
+          :total="words.length"
+        />
+      </ClientOnly>
     </section>
   </main>
 </template>

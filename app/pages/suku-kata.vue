@@ -10,6 +10,7 @@ useSiteSeo({
 const idx = ref(0)
 const showConfetti = ref(0)
 const { markDone, completed } = useProgress('syllables')
+const { trackEngagement } = useEngagement()
 
 const current = computed(() => syllables[idx.value]!)
 
@@ -21,6 +22,7 @@ const completedIdxs = computed(() =>
 
 function next() {
   markDone(current.value.consonant)
+  trackEngagement()
   if (idx.value < syllables.length - 1) {
     idx.value++
   } else {
@@ -53,6 +55,13 @@ function prev() {
 
     <section class="mt-6 sm:mt-8 px-4 sm:px-8">
       <LessonNav :current="idx" :total="syllables.length" @prev="prev" @next="next" />
+      <ClientOnly>
+        <CertificateBanner
+          tahap-key="suku-kata"
+          :completed-count="completed.length"
+          :total="syllables.length"
+        />
+      </ClientOnly>
     </section>
   </main>
 </template>

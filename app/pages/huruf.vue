@@ -10,6 +10,7 @@ useSiteSeo({
 const idx = ref(0)
 const showConfetti = ref(0)
 const { markDone, completed } = useProgress('letters')
+const { trackEngagement } = useEngagement()
 
 const current = computed(() => letters[idx.value]!)
 
@@ -21,6 +22,7 @@ const completedIdxs = computed(() =>
 
 function next() {
   markDone(current.value.upper)
+  trackEngagement()
   if (idx.value < letters.length - 1) {
     idx.value++
   } else {
@@ -53,6 +55,13 @@ function prev() {
 
     <section class="mt-6 sm:mt-8 px-4 sm:px-8">
       <LessonNav :current="idx" :total="letters.length" @prev="prev" @next="next" />
+      <ClientOnly>
+        <CertificateBanner
+          tahap-key="huruf"
+          :completed-count="completed.length"
+          :total="letters.length"
+        />
+      </ClientOnly>
     </section>
   </main>
 </template>

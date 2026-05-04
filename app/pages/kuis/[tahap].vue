@@ -22,6 +22,7 @@ const { current, currentIndex, total, score, finished, record, next, restart } =
 
 const { speak } = useSpeech()
 const { getBest, recordResult } = useQuizScores()
+const { trackEngagement } = useEngagement()
 
 const confettiTrigger = ref(0)
 const feedback = ref<'correct' | 'wrong' | null>(null)
@@ -44,6 +45,8 @@ watch(finished, (done) => {
   recorded.value = true
   const result = recordResult(tahap.value, score.value, total.value)
   isNewBest.value = result.isNewBest
+  // Hitung sebagai aksi bermakna — bisa unlock badge kuis & streak
+  trackEngagement()
 })
 
 async function onAnswer(correct: boolean) {

@@ -70,6 +70,16 @@ const menus = [
 
     <ClientOnly>
       <VoiceWarningBanner />
+      <!-- Streak chip + tombol Penghargaan -->
+      <div class="flex justify-center gap-2 mb-4 flex-wrap">
+        <StreakChip />
+        <NuxtLink
+          to="/penghargaan"
+          class="inline-flex items-center gap-1.5 rounded-full bg-white/95 backdrop-blur shadow-md ring-1 ring-amber-200 px-3 py-1.5 font-bold text-sm text-amber-700 hover:bg-white transition-all"
+        >
+          🏆 <span>Penghargaan</span>
+        </NuxtLink>
+      </div>
     </ClientOnly>
 
     <!-- Menu grid -->
@@ -82,8 +92,8 @@ const menus = [
       />
     </section>
 
-    <!-- Quiz card — full-width challenge below the four tahap -->
-    <section class="mt-4 sm:mt-6">
+    <!-- Bonus: kuis + menulis — kartu spesial di bawah 4 tahap -->
+    <section class="mt-4 sm:mt-6 grid sm:grid-cols-2 gap-4 sm:gap-6">
       <HomeMenuCard
         to="/kuis"
         step="Tantangan"
@@ -92,6 +102,15 @@ const menus = [
         emoji="🎯"
         color="from-fuchsia-500 to-purple-600"
         :delay="500"
+      />
+      <HomeMenuCard
+        to="/menulis"
+        step="Latihan"
+        title="Menulis Huruf"
+        description="Trace huruf A sampai Z dengan jari atau mouse. Latihan motorik plus pengenalan bentuk."
+        emoji="✏️"
+        color="from-cyan-500 to-blue-600"
+        :delay="600"
       />
     </section>
 

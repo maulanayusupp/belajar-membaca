@@ -115,6 +115,66 @@ Tempat dia muncul:
 - **Home hero** — sapaan `excited` dengan speech bubble "Hai! Aku Bita 👋"
 - **Kuis feedback overlay** — `cheer` saat benar, `sad` saat salah (full screen)
 - **QuizResult** — ekspresi adapt ke skor (cheer/happy/idle/sad)
+- **CertificateBanner** — `cheer` saat tahap selesai (banner CTA)
+- **Sertifikat SVG** — `cheer` inline di kiri sertifikat
+
+## Sertifikat
+
+Saat anak menyelesaikan SEMUA materi di sebuah tahap, sebuah banner
+**🏆 Buka Sertifikatmu** muncul di bawah tombol Sebelum/Lanjut. Klik →
+halaman `/sertifikat/[tahap]`.
+
+Sertifikat adalah SVG 1200×900 dengan:
+- Border emas + 4 ornamen bintang di sudut
+- Judul **SERTIFIKAT KEHEBATAN** dengan gradient gold
+- Nama anak (script italic, ambil dari `useChildName`)
+- Judul tahap yang diselesaikan
+- Bita pose `cheer` di kiri, medali emas di kanan
+- Tanggal selesai (format Indonesia, e.g. "4 Mei 2026")
+
+Aksi:
+- **Download SVG** — generate file `Sertifikat-{tahap}-{nama}.svg`, terbuka
+  di browser/Preview/Photoshop/Figma. Semua style baked-in jadi tidak
+  butuh font atau CSS eksternal.
+- **Print / PDF** — `window.print()` dengan CSS `@media print` yang
+  menyembunyikan UI sekitar dan biarkan hanya cert. Browser ngasih opsi
+  "Save as PDF" — beres tanpa library tambahan.
+
+Form nama disediakan di atas sertifikat — anak/orang tua bisa update kapan
+saja. Nama disimpan di `localStorage:belajar-membaca:child-name:v1` dan
+dibersihkan dari karakter selain huruf/spasi/`-`/`'` dengan max 30 karakter.
+
+Halaman sertifikat di-gate: kalau tahap belum selesai, tampil pesan
+"Sudah {N} dari {total}" + link kembali ke pelajaran.
+
+## Latihan menulis (canvas trace)
+
+Halaman `/menulis` melatih anak menulis huruf A–Z dengan jari (di
+tablet/HP) atau mouse (di desktop). Iterate satu huruf per kartu.
+
+**Komponen `TraceCanvas`** terdiri dari dua canvas yang ditumpuk:
+- `template`: huruf abu-abu sebagai panduan, dirender sekali
+- `user`: tempat anak menggambar — pakai Pointer Events (universal untuk
+  mouse/touch/stylus) + `touch-action: none` supaya tidak men-scroll page
+
+Skoring sederhana: render mask huruf di canvas offscreen, bandingkan
+pixel demi pixel — `coverage = (pixel_dicat ∩ pixel_huruf) / pixel_huruf`.
+Threshold default `0.5` (50%) — anak motorik halus 4–7 tahun bervariasi
+luas, jadi sengaja longgar. Kami **tidak** menghukum kalau anak menggambar
+di luar garis — fokus apakah bentuk huruf "tertutup".
+
+Reaksi Bita berdasarkan skor:
+| Skor       | Ekspresi | Pesan                                  |
+| ---------- | -------- | -------------------------------------- |
+| ≥ 80%      | cheer    | "Bagus sekali! Hurufnya mirip banget!" |
+| ≥ 50%      | happy    | "Hebat! Hurufmu sudah terbentuk."      |
+| ≥ 25%      | idle     | "Ayo coba lagi…"                       |
+| <  25%     | sad      | "Belum kelihatan hurufnya…"            |
+
+Aksi: 🧽 Hapus, ✓ Cek, plus tombol Sebelum/Lanjut yang sama dengan lesson
+page lain. Hanya huruf dengan skor lulus yang ditandai `markDone()` di
+`useProgress('tracing-letters')` — tidak otomatis diberi cap saat user
+sekadar geser ke huruf berikutnya tanpa nge-cek.
 
 ## Struktur proyek
 
@@ -127,12 +187,18 @@ app/
 │   ├── useProgress.ts            # localStorage tracker per tahap
 │   ├── useQuiz.ts                # Generic quiz state (questions, score, restart)
 │   ├── useQuizScores.ts          # Best score per kategori (localStorage)
+│   ├── useChildName.ts           # Nama anak (untuk sertifikat)
+│   ├── useStreak.ts              # Daily streak counter (localStorage)
+│   ├── useAchievements.ts        # Badge unlock tracker + toast queue
+│   ├── useEngagement.ts          # Wrapper streak+achievements untuk page handlers
 │   └── useSiteSeo.ts             # Per-page SEO helper
 ├── components/                   # Semua single-purpose, mudah di-compose ulang
 │   ├── AppHeader.vue             # Header + tombol kembali
 │   ├── AudioButton.vue           # Tombol speaker reusable (5 varian, 4 ukuran)
 │   ├── ConfettiBurst.vue         # Animasi confetti saat selesai
 │   ├── FloatingShapes.vue        # 8 emoji background animated
+│   ├── Certificate.vue           # SVG sertifikat 1200×900 (style inline)
+│   ├── CertificateBanner.vue     # Banner CTA "Buka Sertifikatmu" di lesson
 │   ├── HomeMenuCard.vue          # Kartu menu home
 │   ├── Mascot.vue                # Bita — maskot SVG dengan 5 ekspresi
 │   ├── QuizCard.vue              # Soal kuis: audio + 4 opsi
@@ -143,6 +209,9 @@ app/
 │   ├── ProgressDots.vue          # Indikator progress
 │   ├── SentenceCard.vue          # Tahap 4: kalimat dgn highlight per kata
 │   ├── SyllableCard.vue          # Tahap 2: grid 5 suku kata
+│   ├── TraceCanvas.vue           # Canvas latihan menulis (template + user)
+│   ├── AchievementToast.vue      # Toast badge baru di-unlock (pasang di app.vue)
+│   ├── StreakChip.vue            # Pill 🔥 jumlah hari beruntun
 │   ├── VoiceWarningBanner.vue    # Banner kalau voice ID tidak terinstall
 │   └── WordCard.vue              # Tahap 3: chip suku kata + Eja & Gabung
 ├── data/                         # Konten kurikulum — edit untuk tambah materi
@@ -152,11 +221,14 @@ app/
 │   ├── sentences.ts              # 7 kalimat sederhana
 │   └── quiz-specs.ts             # Mapping data → bentuk seragam untuk QuizCard
 └── pages/
-    ├── index.vue                 # Home dengan 4 kartu tahap + 1 kartu kuis
+    ├── index.vue                 # Home: 4 kartu tahap + kuis + menulis
     ├── huruf.vue, suku-kata.vue, kata.vue, kalimat.vue
-    └── kuis/
-        ├── index.vue             # Pilih kategori kuis
-        └── [tahap].vue           # Runner kuis (huruf/suku-kata/kata/kalimat)
+    ├── menulis.vue               # Latihan menulis huruf (canvas trace)
+    ├── kuis/
+    │   ├── index.vue             # Pilih kategori kuis
+    │   └── [tahap].vue           # Runner kuis (huruf/suku-kata/kata/kalimat)
+    └── sertifikat/
+        └── [tahap].vue           # Sertifikat selesai per tahap (SVG + print)
 ```
 
 ### Filosofi komponen
@@ -320,6 +392,12 @@ sparkle dekoratif. Konsisten dengan tone aplikasi.
 - ✅ ~~Setting kecepatan suara di header~~ (selesai)
 - ✅ ~~Riwayat skor kuis terbaik per kategori~~ (selesai)
 - ✅ ~~Mascot karakter dengan ekspresi~~ (Bita — selesai)
-- Mode latihan menulis dengan canvas (trace huruf, deteksi stroke)
-- Export sertifikat selesai per tahap (PDF/SVG download)
-- Daily streak / achievement badges
+- ✅ ~~Export sertifikat selesai per tahap~~ (selesai — SVG download + browser print)
+- ✅ ~~Mode latihan menulis dengan canvas (trace huruf)~~ (selesai)
+- ✅ ~~Daily streak / achievement badges~~ (selesai)
+
+Roadmap baru (untuk pengembangan lanjutan):
+- Export/import data progress (JSON) untuk backup ke perangkat lain
+- Mode multi-anak (profile selector)
+- Cloud sync via Supabase/Firebase (kalau ingin lintas perangkat)
+- Lebih banyak lencana berdasarkan milestone spesifik

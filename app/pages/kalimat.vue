@@ -10,6 +10,7 @@ useSiteSeo({
 const idx = ref(0)
 const showConfetti = ref(0)
 const { markDone, completed } = useProgress('sentences')
+const { trackEngagement } = useEngagement()
 
 const current = computed(() => sentences[idx.value]!)
 
@@ -25,6 +26,7 @@ function onSentenceDone() {
 
 function next() {
   markDone(current.value.text)
+  trackEngagement()
   if (idx.value < sentences.length - 1) {
     idx.value++
   } else {
@@ -57,6 +59,13 @@ function prev() {
 
     <section class="mt-6 sm:mt-8 px-4 sm:px-8">
       <LessonNav :current="idx" :total="sentences.length" @prev="prev" @next="next" />
+      <ClientOnly>
+        <CertificateBanner
+          tahap-key="kalimat"
+          :completed-count="completed.length"
+          :total="sentences.length"
+        />
+      </ClientOnly>
     </section>
   </main>
 </template>
