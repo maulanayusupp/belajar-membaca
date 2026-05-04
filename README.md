@@ -176,6 +176,44 @@ page lain. Hanya huruf dengan skor lulus yang ditandai `markDone()` di
 `useProgress('tracing-letters')` — tidak otomatis diberi cap saat user
 sekadar geser ke huruf berikutnya tanpa nge-cek.
 
+## Streak harian + lencana (achievement)
+
+Halaman `/penghargaan` menampilkan streak harian + grid 14 lencana.
+
+**Streak (`useStreak.ts`)** — track current/longest streak + tanggal main
+terakhir di `localStorage:belajar-membaca:streak:v1`. Logic
+`recordVisit()`:
+- Sudah dicatat hari ini → tidak ada perubahan
+- Selisih persis 1 hari → streak += 1
+- Selisih > 1 hari → streak reset ke 1
+
+Pakai string `YYYY-MM-DD` di local timezone agar tidak bermasalah dengan
+DST. `isActive()` true kalau anak main hari ini atau kemarin.
+
+**Achievements (`useAchievements.ts` + `data/achievements.ts`)** — daftar
+14 lencana, masing-masing punya `check()` yang memanggil composable lain
+langsung (state-nya singleton, jadi aman). `checkAndUnlock()` jalankan
+semua check, unlock yang baru, push ke `pendingToasts` queue.
+
+`<AchievementToast />` global di `app.vue` memantau queue itu dan tampilkan
+satu-per-satu (4 detik per badge, dengan suara TTS "Hebat! Kamu dapat
+lencana baru!").
+
+**`useEngagement.ts`** — wrapper kecil dengan `trackEngagement()` yang
+panggil `recordVisit()` + `checkAndUnlock()` sekaligus. Dipanggil dari:
+- 4 lesson page (huruf/suku-kata/kata/kalimat) saat klik Lanjut
+- Quiz runner saat selesai 10 soal
+- Menulis page saat user lulus tracing (≥50%)
+
+Daftar lencana yang sudah ada (lihat `data/achievements.ts` untuk detail):
+| Kategori | ID | Trigger |
+|----------|----|----|
+| Belajar | `first-letter`, `half-alphabet`, `alphabet-master`, `syllable-explorer`, `word-wizard`, `sentence-reader` | Selesaikan materi |
+| Kuis | `quiz-rookie`, `quiz-marathon`, `quiz-perfect` | Jumlah main / skor 100% |
+| Streak | `streak-3`, `streak-7` | Hari beruntun |
+| Menulis | `trace-first`, `trace-master` | Lulus trace 1 / 10 huruf |
+| Special | `all-rounder` | Selesaikan semua 4 tahap |
+
 ## Struktur proyek
 
 ```
